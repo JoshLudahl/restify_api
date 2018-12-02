@@ -1,0 +1,32 @@
+{
+  "name": "uje",
+  "version": "0.0.1",
+  "description": "A Restify Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "restify",
+    "nodejs",
+    "javascript",
+    "mongoose",
+    "jwt",
+    "authentication",
+    "crud",
+    "api"
+  ],
+  "author": "Josh Ludahl",
+  "license": "MIT",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^8.4.0",
+    "mongoose": "^5.3.14",
+    "mongoose-timestamp": "^0.6.0",
+    "nodemon": "^1.18.7",
+    "restify": "^7.2.3",
+    "restify-errors": "^6.1.1",
+    "restify-jwt-community": "^1.0.9"
+  }
+}
