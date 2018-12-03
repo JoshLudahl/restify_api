@@ -1,5 +1,5 @@
-# restify_api
-Playing with RESTify
+# RESTify API
+Playing with RESTify - This is a basic user login system using JSON Web Tokens for route protection.
 
 ## Routes:
 
