@@ -3,14 +3,18 @@ const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const auth = require('../../auth');
 const jwt = require('jsonwebtoken');
+const rjwt = require('restify-jwt-community');
 const config = require('../../config');
 
 
 module.exports = server => {
 
     //  Register User
-    server.post('/register', (req, res, next) =>{
-        const { email, password } = req.body;
+    server.post('/register', (req, res, next) => {
+        const {
+            email,
+            password
+        } = req.body;
 
         const user = new User({
             email,
@@ -27,7 +31,7 @@ module.exports = server => {
                     const newUser = await user.save();
                     res.send(201);
                     next();
-                } catch(err) {
+                } catch (err) {
                     return next(new errors.InternalError(err.message));
                 }
             });
@@ -35,10 +39,12 @@ module.exports = server => {
 
     });
 
-
     // Authenticate user
-    server.post('/auth', async (req, res, next) =>{
-        const { email, password } = req.body;
+    server.post('/auth', async (req, res, next) => {
+        const {
+            email,
+            password
+        } = req.body;
         try {
             //  Process authentication
             const user = await auth.authenticate(email, password);
@@ -49,8 +55,15 @@ module.exports = server => {
             });
 
             //  Respond with the token
-            const {iat, exp } = jwt.decode(jwt_token);
-            res.send({iat, exp, jwt_token});
+            const {
+                iat,
+                exp
+            } = jwt.decode(jwt_token);
+            res.send({
+                iat,
+                exp,
+                jwt_token
+            });
 
             next();
         } catch (error) {
@@ -60,5 +73,34 @@ module.exports = server => {
         }
     });
 
+    //  Delete ONE user by ID
+    server.del('/user/:id', async (req, res, next) => {
+        try {
+            const user = await User.findOneAndRemove({
+                _id: req.params.id
+            });
+            res.send(204);
+            next();
+        } catch (error) {
+            return next(new errors.ResourceNotFoundError('User not found.'));
+        };
+    });
 
+    //  Get ALL users
+    //  Use JWT Community to secure route
+    server.get('/users',
+        rjwt({
+            secret: config.JWT_SECRET
+        }),
+        async (req, res, next) => {
+
+            //  inquire data
+            try {
+                const users = await User.find();
+                res.send(users);
+                next();
+            } catch (error) {
+                return next(new errors.ResourceNotFoundError(error.message));
+            }
+        });
 };
