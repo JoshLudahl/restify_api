@@ -13,12 +13,14 @@ module.exports = server => {
     server.post('/register', (req, res, next) => {
         const {
             email,
-            password
+            password,
+            details
         } = req.body;
 
         const user = new User({
             email,
-            password
+            password,
+            details
         });
 
         //  Generate Salt and Hash
@@ -29,6 +31,7 @@ module.exports = server => {
                 //  Save User
                 try {
                     const newUser = await user.save();
+                    console.log(`User created: ${newUser}`);
                     res.send(201);
                     next();
                 } catch (err) {
@@ -39,7 +42,7 @@ module.exports = server => {
 
     });
 
-    // Authenticate user
+    //  Authenticate user
     server.post('/login', async (req, res, next) => {
         const {
             email,
@@ -51,7 +54,7 @@ module.exports = server => {
 
             //  Apply JWT Token
             const jwt_token = jwt.sign(user.toJSON(), config.JWT_SECRET, {
-                expiresIn: '15m'
+                expiresIn: '60m'
             });
 
             //  Respond with the token
@@ -94,7 +97,7 @@ module.exports = server => {
         }),
         async (req, res, next) => {
 
-            //  inquire data
+            //  Inquire data
             try {
                 const users = await User.find();
                 res.send(users);
@@ -103,4 +106,26 @@ module.exports = server => {
                 return next(new errors.ResourceNotFoundError(error.message));
             }
         });
+
+    //  Update user by ID
+    server.put('/user/:id', async (req, res, next) => {
+        if (!req.is('application/json')) {
+            return next(new errors.InvalidContentError("Expects application/json"));
+        }
+        try {
+
+            /*
+                Currently cannot update without replacing an array, will need to work in a
+                Will add in next
+            */
+            const user = await User.findOneAndUpdate({
+                _id: req.params.id
+            }, req.body);
+            console.log(req.body);
+            res.send(200);
+            next();
+        } catch (err) {
+            return next(new errors.ResourceNotFoundError("Username/ID is invalid"));
+        };
+    });
 };
