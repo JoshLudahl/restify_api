@@ -5,14 +5,16 @@ const User = mongoose.model('User');
 
 //  Authentication matters
 exports.authenticate = (email, password) => {
-    return new Promise(async (resolve, reject) =>{
+    return new Promise(async (resolve, reject) => {
         try {
             //  Find user by email
-            const user = await User.findOne({email});
+            const user = await User.findOne({
+                email
+            });
             //  Compare passwords if found
-            bcrypt.compare(password, user.password, (err, isMatch) =>{
+            bcrypt.compare(password, user.password, (err, isMatch) => {
                 if (err) throw err;
-                if(isMatch) {
+                if (isMatch) {
                     //  Compare success
                     resolve(user);
                 } else {
@@ -20,8 +22,7 @@ exports.authenticate = (email, password) => {
                     reject('Authentication failed')
                 }
             });
-
-        } catch(err) {
+        } catch (err) {
             //  Email not found (reject)
             reject('Authentication failed');
         }

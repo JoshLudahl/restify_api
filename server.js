@@ -22,10 +22,8 @@ server.listen(config.PORT, () => {
 const db = mongoose.connection;
 db.on('error', (err) => console.log(err));
 
-db.once('open', () =>{
+db.once('open', () => {
     require('./api/routes/customers')(server);
     require('./api/routes/user')(server);
     console.log(`Server started on port: ${config.PORT}`);
 });
-
-

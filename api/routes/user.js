@@ -40,7 +40,7 @@ module.exports = server => {
     });
 
     // Authenticate user
-    server.post('/auth', async (req, res, next) => {
+    server.post('/login', async (req, res, next) => {
         const {
             email,
             password
