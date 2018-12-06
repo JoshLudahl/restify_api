@@ -113,11 +113,7 @@ module.exports = server => {
             return next(new errors.InvalidContentError("Expects application/json"));
         }
         try {
-
-            /*
-                Currently cannot update without replacing an array, will need to work in a
-                Will add in next
-            */
+            //  Find one user and update it
             const user = await User.findOneAndUpdate({
                 _id: req.params.id
             }, req.body);
